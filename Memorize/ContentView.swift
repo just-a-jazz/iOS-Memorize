@@ -13,12 +13,22 @@ struct ContentView: View {
     
     
     var body: some View {
+        VStack {
+            cards
+            cardAdjusters
+        }
+        .padding()
+    }
+    
+    var cards: some View {
         HStack {
             ForEach(0..<cardsToShow, id: \.self) { index in
                 CardView(isFaceUp: true, content: emojis[index])
             }
         }
-        .padding()
+    }
+    
+    var cardAdjusters: some View {
         HStack {
             cardAdjuster(by: -1, image: "rectangle.stack.badge.minus.fill")
             Spacer()
@@ -26,7 +36,6 @@ struct ContentView: View {
         }
         .imageScale(.large)
         .font(.headline)
-        .padding()
     }
     
     func cardAdjuster(by amount: Int, image: String) -> some View {
