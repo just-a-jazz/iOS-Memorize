@@ -8,62 +8,58 @@
 import SwiftUI
 
 struct ContentView: View {
+    let emojis = ["🍒", "🍓", "🍎", "🍉", "🍑", "🍋", "🍌", "🥝", "🥥", "🫐"]
+    @State var cardsToShow = 4
+    
+    
     var body: some View {
-        VStack {
-            HStack {
-                CardView(isFaceUp: true)
-                CardView()
-                CardView()
-                CardView(isFaceUp: true)
-            }
-            HStack {
-                CardView()
-                CardView()
-                CardView()
-                CardView(isFaceUp: true)
-            }
-            HStack {
-                CardView()
-                CardView(isFaceUp: true)
-                CardView()
-                CardView(isFaceUp: true)
-            }
-            HStack {
-                CardView()
-                CardView()
-                CardView()
-                CardView(isFaceUp: true)
+        HStack {
+            ForEach(0..<cardsToShow, id: \.self) { index in
+                CardView(isFaceUp: true, content: emojis[index])
             }
         }
         .padding()
+        HStack {
+            cardAdjuster(by: -1, image: "rectangle.stack.badge.minus.fill")
+            Spacer()
+            cardAdjuster(by: +1, image: "rectangle.stack.badge.plus.fill")
+        }
+        .imageScale(.large)
+        .font(.headline)
+        .padding()
+    }
+    
+    func cardAdjuster(by amount: Int, image: String) -> some View {
+        Button(action: {
+            cardsToShow += amount
+        }, label: {
+            Image(systemName: image)
+        })
+        .disabled(cardsToShow + amount < 1 || cardsToShow + amount > emojis.count)
     }
 }
 
 struct CardView: View {
-    var isFaceUp = false
+    @State var isFaceUp = false
+    let content: String
     
     var body: some View {
-        if isFaceUp {
-            getCardPreview()
-        } else {
-            getCardTop()
-        }
-    }
-    
-    func getCardTop() -> some View {
-        RoundedRectangle(cornerRadius: 15)
-            .foregroundColor(.blue)
-    }
-    
-    func getCardPreview() -> some View {
+        let base = RoundedRectangle(cornerRadius: 15)
         ZStack {
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(.white)
-            RoundedRectangle(cornerRadius: 15)
-                .strokeBorder(lineWidth: 6)
-                .foregroundColor(.blue)
-            Text("🍻")
-                .font(.largeTitle)
+            if isFaceUp {
+                base.foregroundColor(.white)
+                base.strokeBorder(lineWidth: 3)
+                    .foregroundColor(.blue)
+                Text(content)
+                    .font(.largeTitle)
+            } else {
+                base.foregroundColor(.blue)
+            }
+        }
+        .onTapGesture {
+            print(isFaceUp)
+            isFaceUp.toggle()
+            print(isFaceUp)
         }
     }
 }
