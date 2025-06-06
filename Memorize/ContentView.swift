@@ -9,42 +9,22 @@ import SwiftUI
 
 struct ContentView: View {
     let emojis = ["🍒", "🍓", "🍎", "🍉", "🍑", "🍋", "🍌", "🥝", "🥥", "🫐"]
-    @State var cardsToShow = 4
     
     
     var body: some View {
-        VStack {
+        ScrollView {
             cards
-            cardAdjusters
         }
         .padding()
     }
     
     var cards: some View {
-        HStack {
-            ForEach(0..<cardsToShow, id: \.self) { index in
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]) {
+            ForEach(0..<emojis.count, id: \.self) { index in
                 CardView(isFaceUp: true, content: emojis[index])
+                    .aspectRatio(2/3, contentMode: .fit)
             }
         }
-    }
-    
-    var cardAdjusters: some View {
-        HStack {
-            cardAdjuster(by: -1, image: "rectangle.stack.badge.minus.fill")
-            Spacer()
-            cardAdjuster(by: +1, image: "rectangle.stack.badge.plus.fill")
-        }
-        .imageScale(.large)
-        .font(.headline)
-    }
-    
-    func cardAdjuster(by amount: Int, image: String) -> some View {
-        Button(action: {
-            cardsToShow += amount
-        }, label: {
-            Image(systemName: image)
-        })
-        .disabled(cardsToShow + amount < 1 || cardsToShow + amount > emojis.count)
     }
 }
 
@@ -55,20 +35,18 @@ struct CardView: View {
     var body: some View {
         let base = RoundedRectangle(cornerRadius: 15)
         ZStack {
-            if isFaceUp {
+            Group {
                 base.foregroundColor(.white)
                 base.strokeBorder(lineWidth: 3)
                     .foregroundColor(.blue)
                 Text(content)
                     .font(.largeTitle)
-            } else {
-                base.foregroundColor(.blue)
             }
+            .opacity(isFaceUp ? 1 : 0)
+            base.foregroundColor(.blue).opacity(isFaceUp ? 0 : 1)
         }
         .onTapGesture {
-            print(isFaceUp)
             isFaceUp.toggle()
-            print(isFaceUp)
         }
     }
 }
