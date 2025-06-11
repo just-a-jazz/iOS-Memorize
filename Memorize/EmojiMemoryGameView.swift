@@ -18,10 +18,11 @@ struct EmojiMemoryGameView: View {
     }
     
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 0)], spacing: 0) {
             ForEach(0..<viewModel.cards.count, id: \.self) { index in
                 CardView(viewModel.cards[index])
                     .aspectRatio(2/3, contentMode: .fit)
+                    .padding(5)
             }
         }
     }
@@ -42,7 +43,9 @@ struct CardView: View {
                 base.strokeBorder(lineWidth: 3)
                     .foregroundColor(.blue)
                 Text(card.content)
-                    .font(.largeTitle)
+                    .font(.system(size: 200))
+                    .minimumScaleFactor(0.01)
+                    .aspectRatio(1, contentMode: .fit)
             }
             .opacity(card.isFaceUp ? 1 : 0)
             base.foregroundColor(.blue).opacity(card.isFaceUp ? 0 : 1)
