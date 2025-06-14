@@ -8,21 +8,26 @@
 import SwiftUI
 
 struct EmojiMemoryGameView: View {
-    @ObservedObject var viewModel: EmojiMemoryGame = EmojiMemoryGame()
+    @ObservedObject var viewModel: EmojiMemoryGame
     
     var body: some View {
         ScrollView {
             cards
+                .animation(.default, value: viewModel.cards)
         }
         .padding()
     }
     
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 0)], spacing: 0) {
-            ForEach(0..<viewModel.cards.count, id: \.self) { index in
-                CardView(viewModel.cards[index])
+            ForEach(viewModel.cards) { card in
+                CardView(card)
                     .aspectRatio(2/3, contentMode: .fit)
-                    .padding(5)
+                    .padding(4)
+                    .onTapGesture {
+                        viewModel.choose(card)
+                    }
+                    .opacity(card.isMatched ? 0 : 1)
             }
         }
     }
@@ -54,5 +59,5 @@ struct CardView: View {
 }
 
 #Preview {
-    EmojiMemoryGameView()
+    EmojiMemoryGameView(viewModel: EmojiMemoryGame())
 }
